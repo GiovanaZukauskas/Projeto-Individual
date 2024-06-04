@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="shortcut icon" href=".." />
+    <title>chartjs</title>
+
+</head>
+<body onload="dash()">
+ 
+
+  <div class="container_dash">
+    <span class="textoDash">Dashboard</span>
+    <div class="box_texto_inicio">
+      <p>
+        <span id="nome_usuario"></span> <br> A Resposta Correta Seria: Falkenberg
+      </p>
+    </div>
+    
+    
+    <div class="box_dash">
+      <div id="grafico1">
+        <canvas id="myChart"></canvas>
+      </div>
+      <div class="linha"></div>
+      <div id="grafico2">
+        <canvas id="myChart2"></canvas>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+  nome_usuario.innerHTML = sessionStorage.NOME_USUARIO.toUpperCase();
+  nome_usuario.style.color = `#FFF`;
+
+  var qtd_votos1 = 0;
+  var qtd_votos2 = 0;
+  var qtd_votos3 = 0;
+  var qtd_votos4 = 0;
+  var qtd_votos5 = 0;
+  var qtd_votos6 = 0;
+
+  var nome_sobrenome1 = "";
+  var nome_sobrenome2 = "";
+  var nome_sobrenome3 = "";
+  var nome_sobrenome4  = "";
+  var nome_sobrenome5 = "";
+  var nome_sobrenome6 = "";
+  
+
+  function dash() {
+    fetch("/usuarios/puxar_voto")
+      .then(function (resposta) {
+        if (resposta.ok) {
+          resposta.json().then(function (resposta) {
+            console.log("Dados recebidos: ", JSON.stringify(resposta));
+            var teste = resposta;
+            qtd_votos1 = resposta[0].voto_recebido;
+            nome_sobrenome1 = resposta[0].nome;
+
+            if (resposta[1]) {
+              qtd_votos2 = resposta[1].voto_recebido;
+              nome_sobrenome2 = resposta[1].nome;
+            }
+            if (resposta[2]) {
+              qtd_votos3 = resposta[2].voto_recebido;
+              nome_sobrenome3 = resposta[2].nome;
+            }
+
+            if (resposta[3]) {
+              qtd_votos4 = resposta[3].voto_recebido;
+              nome_sobrenome4 = resposta[3].nome;
+            }
+
+            if (resposta[4]) {
+              qtd_votos5 = resposta[4].voto_recebido;
+              nome_sobrenome5 = resposta[4].nome;
+            }
+
+            if (resposta[5]) {
+              qtd_votos6 = resposta[5].voto_recebido;
+              nome_sobrenome6 = resposta[5].nome;
+            }
+
+            graficos1();
+            graficos2();
+          });
+        } else {
+          throw "Houve um erro na API!";
+        }
+      })
+      .catch(function (resposta) {
+        console.error(resposta);
+      });
+  }
+
+  function graficos1() {
+    const data = {
+      labels: [],
+      datasets: [
+        {
+          label: "Quantidade de votos ",
+          data: [],
+          backgroundColor: [
+            "rgb(153, 0, 255)",
+            "rgb(153, 0, 255)",
+            "rgb(153, 0, 255)",
+            "rgb(153, 0, 255)",
+            "rgb(153, 0, 255)",
+            "rgb(153, 0, 255)",
+          ],
+          borderColor: ["#000"],
+          borderWidth: 1.5, 
+          hoverOffset: 2,
+        },
+      ],
+    };
+
+    Chart.defaults.color = "#000";
+
+    data.labels.push(nome_sobrenome1);
+
+    
+
+     data.datasets[0].data.push(qtd_votos1);
+
+if (qtd_votos2 > 0) {
+  data.labels.push(nome_sobrenome2);
+  data.datasets[0].data.push(qtd_votos2);
+}
+if (qtd_votos3 > 0) {
+  data.labels.push(nome_sobrenome3);
+  data.datasets[0].data.push(qtd_votos3);
+  }
+
+  if (qtd_votos3 > 0) {
+  data.labels.push(nome_sobrenome4);
+  data.datasets[0].data.push(qtd_votos4);
+}
+
+if (qtd_votos3 > 0) {
+  data.labels.push(nome_sobrenome5);
+  data.datasets[0].data.push(qtd_votos5);
+}
+
+if (qtd_votos3 > 0) {
+  data.labels.push(nome_sobrenome6);
+  data.datasets[0].data.push(qtd_votos6);
+}
+
+const config = {
+  type: "bar",
+  data: data,
+  options: {
+    indexAxis: "y",
+    plugins: {
+      title: {
+        display: true,
+        text: "Confira os Sobrenomes escolhidos pelos usuários:",
+        padding: {
+          top: 20,
+          bottom: 20,
+        },
+      },
+    },
+  },
+};
+
+const myChart = new Chart(document.getElementById("myChart"), config);
+
+
+}
+
+
+let porcentagemVoto1 = 0
+let porcentagemVoto2 = 0
+let porcentagemVoto3 = 0
+let porcentagemVoto4 = 0
+let porcentagemVoto5 = 0
+let porcentagemVoto6 = 0
+
+  var total = 0;
+
+  function graficos2() {
+
+    let totalVotos =  qtd_votos1 + qtd_votos2 + qtd_votos3 + qtd_votos4 + qtd_votos5 + qtd_votos6
+     porcentagemVoto1 = (qtd_votos1 / totalVotos) * 100
+     porcentagemVoto2 = (qtd_votos2 / totalVotos) * 100
+     porcentagemVoto3 = (qtd_votos3 / totalVotos) * 100
+     porcentagemVoto4 = (qtd_votos4 / totalVotos) * 100
+     porcentagemVoto5 = (qtd_votos5 / totalVotos) * 100
+     porcentagemVoto6 = (qtd_votos6 / totalVotos) * 100
+
+     console.log(porcentagemVoto3)
+    console.log(totalVotos)
+    const data2 = {
+      labels: [],
+      datasets: [
+        {
+          label: "votos",
+          data: [],
+          backgroundColor: [
+
+            "rgba(0, 120, 0)",
+            "rgba(255, 0, 255)",
+            "rgba(255, 0, 0)",
+            "rgba(0, 0, 200)",
+            "rgba(127, 255, 0)",
+            "rgba(0, 197, 255)",
+
+          ],
+
+          borderColor: "rgb(26, 25, 25)",
+          hoverOffset: 2,
+          borderWidth: 1.2,
+          borderJoinStyle: "miter",
+          borderAlign: "inner",
+          borderRadius: "outerEnd",
+        },
+      ],
+    };
+    Chart.defaults.color = "#000";
+
+    data2.labels.push(nome_sobrenome1);
+    data2.datasets[0].data.push(porcentagemVoto1.toFixed(2));
+
+    if (qtd_votos2 > 0) {
+      data2.labels.push(nome_sobrenome2);
+      data2.datasets[0].data.push(porcentagemVoto2.toFixed(2));
+    }
+    if (qtd_votos3 > 0) {
+      data2.labels.push(nome_sobrenome3);
+      data2.datasets[0].data.push(porcentagemVoto3.toFixed(2));
+    }
+    if (qtd_votos3 > 0) {
+      data2.labels.push(nome_sobrenome4);
+      data2.datasets[0].data.push(porcentagemVoto3.toFixed(2));
+    }
+    if (qtd_votos3 > 0) {
+      data2.labels.push(nome_sobrenome5);
+      data2.datasets[0].data.push(porcentagemVoto3.toFixed(2));
+    }
+    if (qtd_votos3 > 0) {
+      data2.labels.push(nome_sobrenome6);
+      data2.datasets[0].data.push(porcentagemVoto3.toFixed(2));
+    }
+
+    const config2 = {
+      type: "pie",
+      data: data2,
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: " Em Porcentagem:",
+            padding: {
+              top: 20,
+              bottom: 20,
+            },
+          },
+        },
+      },
+    };
+
+    const myChart = new Chart(document.getElementById("myChart2"), config2);
+  }
+  
+
+
+
+
+</script>
+    
+
+  

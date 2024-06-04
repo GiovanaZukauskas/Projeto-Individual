@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: black;
+
+    }
+
+    div {
+      background-color: rgb(0, 0, 0);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 80px;
+      border-radius: 15px;
+      color: rgb(213, 121, 7);
+
+
+    }
+
+    input {
+      padding: 15px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+    }
+
+    button {
+      background-color: rgb(213, 121, 7);
+      border: none;
+      padding: 15px;
+      width: 100%;
+      border-radius: 10px;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: rgb(240, 188, 66);
+    }
+  </style>
+</head>
+
+<body>
+
+
+
+
+  <div>
+    <h1>Cadastro</h1>
+    <input type="text" placeholder="Nome" id="input_nome_usuario"> <br> <br>
+    <input type="text" placeholder="E-mail" id="input_email"> <br> <br>
+    <input type="password" placeholder="Senha" id="input_senha_usuario"> <br> <br>
+    <input type="password" placeholder="Confirmar Senha" id="input_confirmacao_senha"> <br> <br>
+
+    <button onclick="cadastrar()">Cadastrar</button> <br> <br>
+    <a href="login.html"><button>Faça Login</button></a>
+  </div>
+
+  <img src="mapa2.jpg" width="100%">
+</body>
+
+</html>
+
+<script>
+
+
+  function validarSenha(senha) {
+
+
+    const caracteresEspeciais = ["!", "@", "#", "$", "%", "&", "|", "\\", "^", "`", "~", ","]
+    let possuiCaractereEspecial = false;
+
+    for (let i = 0; i < senha.length; i++) {
+
+      if (caracteresEspeciais.includes(senha[i])) {
+        possuiCaractereEspecial = true;
+        break;
+      }
+    }
+
+    return possuiCaractereEspecial;
+  }
+
+
+
+
+
+
+
+  function validarEmail(email) {
+
+    var arroba = -1;
+    var ponto = -1;
+
+    for (var i = 0; i < email.length; i++) {
+      if (email[i] === '@') {
+        arroba = i;
+      } else if (email[i] === '.') {
+        ponto = i;
+      }
+
+    }
+
+    return arroba > 0 && ponto > arroba + 1 && ponto < email.length - 1;
+  }
+
+
+  function cadastrar() {
+
+    //Recupere o valor da nova input pelo nome do id
+    // Agora vá para o método fetch logo abaixo
+    var nomeVar = input_nome_usuario.value;
+    var emailVar = input_email.value;
+    var senhaVar = input_senha_usuario.value;
+    var confirmacaoSenhaVar = input_confirmacao_senha.value;
+
+    if (
+      nomeVar == "" ||
+      emailVar == "" ||
+      senhaVar == "" ||
+      confirmacaoSenhaVar == ""
+    ) {
+      alert(`Erro! Preencha todos os Campos!`)
+      return false;
+    } else if (nomeVar.length < 3) {
+      alert(`Insira um Nome Válido!`)
+      return false;
+    } else if (!validarEmail(emailVar)) {
+      alert(`Insira um E-mail Válido!`)
+      return false;
+    } else if (!validarSenha(senhaVar)) {
+      alert("Senha inválida! Insira um Caracter Especial!");
+      return false;
+    } 
+
+    else {
+      alert(`Cadastro realizado com Sucesso!`)
+      fetch("/usuarios/cadastrar", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          // crie um atributo que recebe o valor recuperado aqui
+          // Agora vá para o arquivo routes/usuario.js
+          nomeServer: nomeVar,
+          emailServer: emailVar,
+          senhaServer: senhaVar,
+        }),
+      })
+    }
+  }
+
+
+
+
+
+
+</script>
